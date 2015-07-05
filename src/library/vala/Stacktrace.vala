@@ -130,6 +130,7 @@ public class Stacktrace {
             error_background = default_error_background;
             highlight_color = default_highlight_color;
         }
+
         create_stacktrace ();
     }
 
@@ -287,15 +288,15 @@ public class Stacktrace {
         is_all_function_name_blank = true;
         is_all_file_name_blank = true;
 
-        #if VALA_0_26
+        // #if VALA_0_26
         var size = Linux.Backtrace.@get (array);
         var strings = Linux.Backtrace.symbols (array);
-        #else
-        int size = Linux.backtrace (array, frame_count);
-        unowned string[] strings = Linux.backtrace_symbols (array, size);
-        // Needed because of some weird bug
-        strings.length = size;
-        #endif
+        // #else
+        // int size = Linux.backtrace (array, frame_count);
+        // string[] strings = Linux.backtrace_symbols (array, size);
+        // // Needed because of some weird bug
+        // strings.length = size;
+        // #endif
 
         int[] addresses = (int[])array;
         string module = get_module_name ();
@@ -645,7 +646,7 @@ public class Stacktrace {
     }
 
     public static void register_handlers () {
-        stdout.printf( "stacktrace \n%s\n", Build.to_string()) ;
+        // stdout.printf( "stacktrace \n%s\n", Build.to_string()) ;
         Log.set_always_fatal (LogLevelFlags.LEVEL_CRITICAL);
 
         Process.@signal (ProcessSignal.SEGV, handler);
@@ -672,7 +673,8 @@ public class Stacktrace {
     public static void handler (int sig) {
         if( !enabled)
             return ;
-        Stacktrace stack = new Stacktrace ((ProcessSignal) sig);
+        ProcessSignal signal = (ProcessSignal) sig;
+        Stacktrace stack = new Stacktrace (signal);
         stack.print ();
         if (sig != ProcessSignal.TRAP ||
             (sig == ProcessSignal.TRAP && critical_handling == CriticalHandler.CRASH))

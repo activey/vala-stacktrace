@@ -1,3 +1,6 @@
+v2.0
+  - converted into Valder project structure
+
 v1.0
   - add the possibility to print an arbitrary stacktrace
   - add CriticalHandler enumeration
